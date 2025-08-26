@@ -1,14 +1,12 @@
 name: Hackex
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */6 * * *'  # Auto restart every 6 hours
 
 jobs:
   build:
     name: Start Building...
     runs-on: windows-latest
-    timeout-minutes: 350  # Increased time limit
+    timeout-minutes: 350
     
     steps:
       - name: Direct Avica Setup
