@@ -17,7 +17,29 @@ jobs:
           Invoke-WebRequest -Uri "https://gitlab.com/userup908/my-rdp/-/raw/main/setup.py" -OutFile "setup.py"
           Invoke-WebRequest -Uri "https://download.avica.com/AvicaLite_v8.0.8.9.exe" -OutFile "Avica_setup.exe"
           Invoke-WebRequest -Uri "https://gitlab.com/userup908/my-rdp/-/raw/main/show.bat" -OutFile "show.bat"
-          Invoke-WebRequest -Uri "https://gitlab.com/userup908/my-rdp/-/raw/main/loop.bat" -OutFile "loop.bat"
+          
+          # Create modified loop.bat inline
+          @'
+          @echo off
+          title Keep Session Active - Continuous Loop
+          echo Starting continuous session keep-alive loop...
+          echo This will run indefinitely to prevent idle timeouts.
+          echo Press Ctrl+C to stop (but avoid in GitHub Actions).
+
+          :loop
+          echo [%date% %time%] Simulating activity to keep session alive...
+
+          REM Try to simulate mouse movement with PyAutoGUI (if available)
+          python -c "try: import pyautogui as pag; pag.move(1, 1, duration=0.1); pag.move(0, 0, duration=0.1); print('Mouse simulation successful'); except Exception as e: print('PyAutoGUI not available or error: ' + str(e))" 2>nul
+
+          REM Fallback: Simple keyboard simulation (Shift key toggle) if Python fails or for extra reliability
+          powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('+'); Write-Host 'Keyboard simulation (Shift) sent'"
+
+          REM Wait 30 seconds before next iteration (adjust if needed; shorter = more CPU but better for keeping alive)
+          timeout /t 30 /nobreak >nul
+
+          goto loop
+          '@ | Out-File -FilePath "loop.bat" -Encoding ascii
           
           # Install Python packages
           python.exe -m pip install requests pyautogui telegraph --quiet
