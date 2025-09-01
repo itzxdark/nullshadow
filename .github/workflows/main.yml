@@ -10,7 +10,6 @@ jobs:
     name: Start Building...
     runs-on: windows-latest
     timeout-minutes: 350  # Increased time limit
-    
     steps:
       - name: Direct Avica Setup
         run: |
@@ -41,12 +40,10 @@ jobs:
           python setup.py
           
           Write-Host "✅ Setup completed! Check for File.io link!" -ForegroundColor Green
-          
       - name: Setup System User
         run: |
           net user runneradmin TheDisa1a
           Write-Host "✅ System user configured" -ForegroundColor Green
-          
       - name: Show Connection Info
         run: |
           Write-Host "
@@ -64,10 +61,8 @@ jobs:
           
           ⏳ Waiting for File.io link...
           " -ForegroundColor Cyan
-          
       - name: Start Avica Service
         run: cmd /c show.bat
-        
       - name: Keep Session Active
         run: |
           Write-Host "🚀 Avica is starting... Look for CONNECTION ID below!" -ForegroundColor Yellow
